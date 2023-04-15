@@ -81,18 +81,21 @@ void insertRecord(struct HashType *hashTable, struct RecordType *record, int tab
     // call the hash function to get the index
     int index = hash(record->id, tableSize);
     // if the RecordType at that index is NULL
-    if(hashTable[index] == NULL)
+    if(hashTable[index].pointer == NULL)
+    {
         hashTable[index].pointer = record;
+    }
     else
     {
-        recordPointer = record;
-        while(recordPointer != NULL)
+        recordPointer = hashTable[index].pointer;
+        while(recordPointer->next != NULL)
         {
             recordPointer = recordPointer->next;
         }
         recordPointer->next = record;
     }
-        
+            printf("index inserted: %d for id: %d\n", index, record->id);
+
         // set 'record' equal to the HashType pointer in the table at index
     // else
         // traverse to the end of the linkedlist and add 'record' to the end of it
@@ -109,19 +112,18 @@ void displayRecordsInHash(struct HashType *hashTable, int tableSize)
     {
         if(hashTable[i].pointer != NULL)
         {
-            printf("%d %d %d\n", hashTable[i].pointer->id, hashTable[i].pointer->name, hashTable[i].pointer->order);
-        }
-        else if(hashTable[i].pointer != NULL && hashTable[i].pointer->next != NULL)
-        {
           traverse = hashTable[i].pointer;
           while(traverse != NULL)
           {
-              printf("%d %d %d\n", traverse->id, traverse->name, traverse->order);
+              printf("index: [%d] %d %d %d -> ", i, traverse->id, traverse->name, traverse->order);
               traverse = traverse->next;
           }
+          printf("NULL\n");
         }
+        else
+            printf("index: [%d] is blank\n",i);
     }
-    
+
     // for each entry in the table
         // print the contents in that index
         // The output should look like this (for example): "Index 1 -> 21715, Q, 16 -> 28876, a, 26 -> NULL"
@@ -136,14 +138,14 @@ int main(void)
     printRecords(pRecords, recordSz);
 
     struct HashType * hashPointer;
-    int hashTableSize = 10;
-    hashPointer = (struct HashType *)calloc(hashTableSize, sizeOf(struct HashType));
+    int hashTableSize = 11;
+    hashPointer = (struct HashType *)calloc(hashTableSize, sizeof(struct HashType));
     for(int i = 0; i < recordSz; i++)
     {
         insertRecord(hashPointer, &(pRecords[i]), hashTableSize);
     }
     displayRecordsInHash(hashPointer, hashTableSize);
-    
+
     // Initialize the hash table
     // create a variable hashTableSize and assign it a value
     // initialize a hashTable, use calloc (so everything is assigned to NULL)
